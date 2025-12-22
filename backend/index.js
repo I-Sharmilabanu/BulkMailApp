@@ -8,6 +8,7 @@ const multer = require("multer");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Multer
 const upload = multer({ storage: multer.memoryStorage() });
