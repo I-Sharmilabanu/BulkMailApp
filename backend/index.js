@@ -6,8 +6,13 @@ const sgMail = require("@sendgrid/mail");
 const multer = require("multer");
 
 const app = express();
-app.use(cors());
+app.use(cors(
+    {origin:[https://bulkmail-wibk.onrender.com],
+             methods:["GET",POST],
+             credentials:true}
+));
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 
 // Multer
