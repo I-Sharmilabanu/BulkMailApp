@@ -87,6 +87,9 @@ app.post("/sendemail", upload.single("file"), async (req, res) => {
         res.json({ success: false, failedEmails: [] });
     }
 });
+app.get("/",function(req,res){
+    res.send("server running")});
+
 
 // Start
 const PORT = process.env.PORT || 5000;
