@@ -60,7 +60,7 @@ function App() {
         setFailedEmails(failed || []);
         const result = success ? "Success" : "Partial / Fail";
 
-        setHistory(prev => [
+       setHistory(prev => [
           { msg, date: new Date().toLocaleString(), status: result },
           ...prev
         ].slice(0, 5));

@@ -62,8 +62,7 @@ app.post("/sendemail", upload.single("file"), async (req, res) => {
                 failedEmails.push(email);
                 continue;
             }
-
-            try {
+          try {
                 await sgMail.send({
                     to: email,
                     from: process.env.EMAIL_FROM,
