@@ -6,14 +6,16 @@ const sgMail = require("@sendgrid/mail");
 const multer = require("multer");
 
 const app = express();
-app.use(cors());
+app.use(cors())
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Multer
 const upload = multer({ storage: multer.memoryStorage() });
 
 // SendGrid
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+app.get("/",(req,res)=> res.send("backend is running"))
 
 // MongoDB
 mongoose.connect(process.env.MONGODB_URI)
