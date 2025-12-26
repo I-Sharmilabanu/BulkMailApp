@@ -54,13 +54,13 @@ function App() {
     formData.append("emailList", JSON.stringify(emailList));
     formData.append("file", selectedFile);
 
-   axios.post("https://bulkmail-wibk.onrender.com/sendemail", formData)
+    axios.post("https://bulkmail-wibk.onrender.com", formData)
       .then(res => {
         const { success, failedEmails: failed } = res.data;
         setFailedEmails(failed || []);
         const result = success ? "Success" : "Partial / Fail";
 
-       setHistory(prev => [
+        setHistory(prev => [
           { msg, date: new Date().toLocaleString(), status: result },
           ...prev
         ].slice(0, 5));
@@ -75,7 +75,6 @@ function App() {
         alert("Error sending emails ❌");
         setstatus(false);
       });
-
   }
 
   function handledelete() {
