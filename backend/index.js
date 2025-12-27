@@ -6,7 +6,11 @@ const sgMail = require("@sendgrid/mail");
 const multer = require("multer");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin:"*",
+    methods:["GET","POST"],
+    allowedHeaders:["Content-Type","Authorization"]
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -90,8 +94,7 @@ app.post("/sendemail", upload.single("file"), async (req, res) => {
         res.json({ success: false, failedEmails: [] });
     }
 });
-app.get("/",function(req,res){
-    res.send("server running")});
+
 
 
 // Start
