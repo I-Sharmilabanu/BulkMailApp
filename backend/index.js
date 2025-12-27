@@ -11,11 +11,12 @@ app.use(cors({
     methods:["GET","POST"],
     allowedHeaders:["Content-Type","Authorization"]
 }));
+app.options("*",cors())
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.urlencoded({ extended: true }));
+
 
 // Multer
 const upload = multer({ storage: multer.memoryStorage() });
