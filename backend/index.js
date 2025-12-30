@@ -6,13 +6,12 @@ const sgMail = require("@sendgrid/mail");
 const multer = require("multer");
 
 const app = express();
-const corsOptions={
-    origin:"https://bulk-mail-app-84gp.vercel.app/",
+app.use(cors({
+    origin:"https://bulk-mail-app-84gp.vercel.app",
     methods:["GET","POST","OPTIONS"],
     allowedHeaders:["Content-Type","Authorization"]
-};
-app.use(cors(corsOptions));
-app.options("*",cors(corsOptions));
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
