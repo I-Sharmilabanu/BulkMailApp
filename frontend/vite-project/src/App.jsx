@@ -54,7 +54,8 @@ function App() {
     formData.append("emailList", JSON.stringify(emailList));
     formData.append("file", selectedFile);
 
-    axios.post("https://bulkmail-wibk.onrender.com/sendemail", formData)
+    axios.post("https://bulkmailapp-project.onrender.com", formData)
+    
       .then(res => {
         const { success, failedEmails: failed } = res.data;
         setFailedEmails(failed || []);
