@@ -11,7 +11,7 @@ app.use(cors({
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
-app.use("*",cors())
+app.options("*",cors());
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "https://bulk-mail-app-84gp.vercel.app");
