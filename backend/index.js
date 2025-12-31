@@ -8,7 +8,23 @@ const multer = require("multer");
 const app = express();
 app.use(cors({
   origin: "https://bulk-mail-app-84gp.vercel.app",
-}))
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
+app.options("*", cors());
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://bulk-mail-app-84gp.vercel.app");
+  res.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+
 
 
 app.use(express.json());
