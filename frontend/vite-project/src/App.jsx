@@ -33,7 +33,8 @@ function App() {
       const data = e.target.result;
       const workbook = XLSX.read(data, { type: "binary" });
       const sheetName = workbook.SheetNames[0];
-      const emails = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: "A" })
+      const emails = XLSX.utils
+        .sheet_to_json(workbook.Sheets[sheetName], { header: "A" })
         .map(item => item.A)
         .filter(Boolean);
       setEmailList(emails);
@@ -54,8 +55,11 @@ function App() {
     formData.append("emailList", JSON.stringify(emailList));
     formData.append("file", selectedFile);
 
-    axios.post("https://bulkmailapp-c4o7.onrender.com/sendemail", formData)
-    
+    axios.post(
+      `${import.meta.env.VITE_BACKEND_URL}/sendemail`,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    )
       .then(res => {
         const { success, failedEmails: failed } = res.data;
         setFailedEmails(failed || []);
@@ -68,19 +72,27 @@ function App() {
 
         alert(failed.length > 0
           ? `Sent with ${failed.length} failed emails`
-          : "Email sent successfully ✔️");
+          : "All emails sent successfully");
         setstatus(false);
       })
       .catch(() => {
-        setHistory(prev => [{ msg, date: new Date().toLocaleString(), status: "Fail" }, ...prev].slice(0, 5));
-        alert("Error sending emails ❌");
+        setHistory(prev => [
+          { msg, date: new Date().toLocaleString(), status: "Fail" },
+          ...prev
+        ].slice(0, 5));
+        alert("Error sending emails");
         setstatus(false);
       });
   }
 
   function handledelete() {
-    setmsg(""); setEmailList([]); setSelectedFile(null); setstatus(false);
-    setMsgError(""); setFileError(""); setFailedEmails([]);
+    setmsg("");
+    setEmailList([]);
+    setSelectedFile(null);
+    setstatus(false);
+    setMsgError("");
+    setFileError("");
+    setFailedEmails([]);
   }
 
   function deleteHistory(index) {
@@ -89,60 +101,100 @@ function App() {
 
   return (
     <div className='font-serif'>
-      <div className='fixed top-0 left-0 right-0 bg-blue-300 mx-auto max-w-3xl h-screen w-full rounded-lg m-4 overflow-auto scrollbar-hide'>
-        <div className='mt-5 w-5/6 mx-auto bg-gray-200 hover:bg-white min-h-[90%] rounded-xl shadow-xl shadow-slate-600 p-4'>
-          <h1 className='text-blue-900 p-3 font-bold text-5xl'>✉︎BulkMail App</h1>
-          <h2 className='text-black p-4 mt-2 text-xl rounded-xl font-medium'>Reach more customers with bulk email solutions.</h2>
+      {/* OUTER CONTAINER (RESPONSIVE FIX) */}
+      <div className='min-h-screen bg-blue-300 flex justify-center p-2 sm:p-4'>
+        <div className='w-full sm:w-5/6 max-w-3xl bg-gray-200 hover:bg-white rounded-lg shadow-xl shadow-slate-600 p-4 overflow-auto'>
+          
+          <h1 className='text-blue-900 p-3 font-bold text-3xl sm:text-5xl text-center'>
+            ✉︎BulkMail App
+          </h1>
+
+          <h2 className='text-black p-4 mt-2 text-lg sm:text-xl rounded-xl font-medium text-center'>
+            Reach more customers with bulk email solutions.
+          </h2>
 
           <textarea
-            onChange={handlemsg} value={msg}
-            className='bg-white/20 w-full h-32 outline-none border-4 border-blue-300 hover:border-blue-700 rounded text-black shadow-xl'
+            onChange={handlemsg}
+            value={msg}
+            className='bg-white/20 w-full h-32 outline-none border-4 border-blue-300 hover:border-blue-700 rounded text-black shadow-xl p-2'
             placeholder='Enter the email text... '
           />
           {msgError && <p className='text-red-600 ml-1'>{msgError}</p>}
 
-          <div className='flex-row items-center mt-5 p-2 border-dashed border-2 border-blue-400 hover:border-blue-700 mx-3 animate-pulse hover:animate-none'>
+          {/* FILE UPLOAD */}
+          <div className='flex flex-col items-center mt-5 p-4 border-dashed border-2 border-blue-400 hover:border-blue-700 mx-3 animate-pulse hover:animate-none'>
             <h3 className='text-4xl'>📥</h3>
-            <h2 className='mb-6 text-black font-medium text-xl'>Upload your file here</h2>
-            <input onChange={handlefile} type="file" className='ml-44' />
+            <h2 className='mb-3 text-black font-medium text-lg sm:text-xl'>
+              Upload your file here
+            </h2>
+
+            <input
+              onChange={handlefile}
+              type="file"
+              className='block mx-auto sm:ml-44'
+            />
             {fileError && <p className='text-red-600 ml-1'>{fileError}</p>}
           </div>
 
-          <p className='mt-2'>Total count: {emailList.length}</p>
+          <p className='mt-2 text-center'>
+            Total count: {emailList.length}
+          </p>
 
-          <div className='flex flex-row justify-evenly items-center mt-6'>
-            <button onClick={send} className='bg-blue-600 hover:bg-blue-900 rounded p-4 text-white text-2xl font-semibold'>
+          {/* BUTTONS */}
+          <div className='flex flex-col sm:flex-row gap-4 justify-evenly items-center mt-6'>
+            <button
+              onClick={send}
+              className='bg-blue-600 hover:bg-blue-900 rounded p-4 text-white text-xl sm:text-2xl font-semibold w-full sm:w-auto'
+            >
               {status ? "Sending..." : "➤send"}
             </button>
-            <button onClick={handledelete} className='bg-red-500 hover:bg-red-700 rounded text-black p-4 text-2xl font-semibold'>
+
+            <button
+              onClick={handledelete}
+              className='bg-red-500 hover:bg-red-700 rounded text-black p-4 text-xl sm:text-2xl font-semibold w-full sm:w-auto'
+            >
               🗑Delete
             </button>
           </div>
 
-          {/* History */}
+          {/* HISTORY */}
           <div className='mt-6 space-y-4'>
-            {history.length === 0 && <p>No history yet.</p>}
+            {history.length === 0 && <p className='text-center'>No history yet.</p>}
             {history.map((item, index) => (
-              <div key={index} className='border rounded-xl p-4 bg-white shadow-md flex justify-between items-start'>
-                <div className='bg-blue-300 rounded-xl p-3'>
+              <div
+                key={index}
+                className='border rounded-xl p-4 bg-white shadow-md flex flex-col sm:flex-row justify-between items-start gap-3'
+              >
+                <div className='bg-blue-300 rounded-xl p-3 w-full'>
                   <p><strong>Message:</strong> {item.msg}</p>
                   <p><strong>Sent At:</strong> {item.date}</p>
-                  <p><strong>Status:</strong> <span className={item.status === "Success" ? "text-green-600" : "text-red-600"}>{item.status}</span></p>
+                  <p>
+                    <strong>Status:</strong>{" "}
+                    <span className={item.status === "Success" ? "text-green-600" : "text-red-600"}>
+                      {item.status}
+                    </span>
+                  </p>
                 </div>
-                <button onClick={() => deleteHistory(index)} className='bg-red-500 hover:bg-red-700 text-white rounded px-2 py-1 text-sm'>Delete</button>
+                <button
+                  onClick={() => deleteHistory(index)}
+                  className='bg-red-500 hover:bg-red-700 text-white rounded px-3 py-1 text-sm self-end'
+                >
+                  Delete
+                </button>
               </div>
             ))}
           </div>
 
-          {/* Failed Emails */}
+          {/* FAILED EMAILS */}
           {failedEmails.length > 0 && (
-            <div className="mt-6 bg-red-100 p-4 rounded-xl">
-              <h3 className="text-red-700 font-bold text-xl mb-2">❌ Failed Emails ({failedEmails.length})</h3>
-              <ul className="list-disc ml-6 text-red-600">
-                {failedEmails.map((email, i) => (<li key={i}>{email}</li>))}
-              </ul>
-            </div>
-          )}
+  <div className="mt-6 bg-red-100 p-4 rounded-xl text-center">
+    <h3 className="text-red-700 font-bold text-xl">
+      ❌ {failedEmails.length} emails failed to send
+    </h3>
+  </div>
+)}
+
+          
         </div>
       </div>
     </div>
