@@ -111,6 +111,9 @@ app.post("/sendemail", upload.single("file"), async (req, res) => {
     });
   }
 });
+app.use("/" ,(req,res)=>{
+  res.send("backend is running..")
+})
 
 /* ===================== SERVER ===================== */
 const PORT = process.env.PORT || 5000;
